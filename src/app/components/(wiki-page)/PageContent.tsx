@@ -146,7 +146,7 @@ const PageContent: React.FC<Props> = async (props) => {
        
         if (section_content !== "" && section_content_html !== "" && section_content !== null && section_content_html !== null) {
             try{
-                //await PostContentToDB(props.section_index, props.page_id, section_content, section_content_html!, props.section_title, props.page_title);
+                await PostContentToDB(props.section_index, props.page_id, section_content, section_content_html!, props.section_title, props.page_title);
             }
             catch (e) {
                 console.log(e);
