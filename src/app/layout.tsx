@@ -7,9 +7,10 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MAGA Wiki",
-  description: "Wiki articles made simple and engaging",
+  title: "Simple Wiki: Engaging and Simple Articles of Complex Topics",
+  description: "Discover Simple Wiki for easy-to-understand summaries and engaging explanations of complex wiki articles - perfect for quick learning and insights.",
 };
+
 
 export default function RootLayout({
   children,

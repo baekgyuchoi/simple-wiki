@@ -1,6 +1,3 @@
-
-
-import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
@@ -21,8 +18,8 @@ const HomeButton: React.FC<Props> = ({ /* Destructure your props here */ }) => {
         <div className='flex items-center justify-center  '>
             <div className=" flex items-center justify-center mt-2  " >
                 <img
-                    src='/Maga_wiki_long_logo.png'
-                    alt='Maga Wiki Logo'
+                    src='/simple_wiki_logo.png'
+                    alt='Simple Wiki Logo'
                     className='w-1/2'
                     
                     ></img>

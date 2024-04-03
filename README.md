@@ -1,2 +1,2 @@
-# Maga-wiki-v1
+# Simple-wiki-v1
  

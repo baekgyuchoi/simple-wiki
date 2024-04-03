@@ -302,11 +302,11 @@ export default async function WikiPage({ params, searchParams }: {
                   
 
                     <div className='flex w-full flex-1 flex-col items-center pl-0 pr-0 '>
-                      <Card className=" text-black  sm:w-3/4 w-full mb-0.5 flex-1 rounded-t-3xl from-primary to-primary/80 shadow-xl border-1 sm:mb-8 sm:flex-initial sm:rounded-b-3xl">
+                      <Card className=" text-black  sm:w-3/4 w-full mb-0.5 flex-1 rounded-t-3xl from-primary to-primary/80 shadow-xl border-black border-2 sm:mb-8 sm:flex-initial sm:rounded-b-3xl">
                       <CardHeader className="mt-12 sm:mt-32 mx-6 flex flex-col items-center md:flex-row">
                         <div className="w-full md:w-1/2 flex flex-col items-center justify-center mb-8 md:mb-0 md:mr-8">
                           <h1 className="text-2xl sm:text-3xl font-semibold mb-2">About:</h1>
-                          <h1 className="inline-block bg-gradient-to-br from-secondary to-primary bg-clip-text w-fit pb-1 text-3xl font-bold text-transparent sm:text-5xl text-center">
+                          <h1 className="inline-block bg-gradient-to-br from-primary to-secondary bg-clip-text w-fit pb-1 text-3xl font-bold text-transparent sm:text-5xl text-center">
                             {page_title}
                           </h1>
                         </div>

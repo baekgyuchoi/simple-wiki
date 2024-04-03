@@ -14,7 +14,7 @@ const HomeTypewriter: React.FC<Props> = ({ /* Destructure your props here */ }) 
 
     return (
         // Return your JSX here
-        <div className="font-mono text-gray-300 text-lg w-full text-center">
+        <div className="font-mono text-gray-600 text-lg w-full text-center">
           
           <TypewriterComponent 
             options={{

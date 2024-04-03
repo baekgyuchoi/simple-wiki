@@ -1,4 +1,4 @@
-import { magameaning_prompt } from "@/app/helpers/constants/magawiki-prompt";
+import { simplemeaning_prompt } from "@/app/helpers/constants/simplewiki-prompt";
 import OpenAI from "openai";
 import prisma from "@/lib/db";
 
@@ -27,7 +27,7 @@ async function GetSectionContent(section_title: string, section_text: string, pa
     const completion = await open_ai.chat.completions.create({
         model : "gpt-3.5-turbo-0125",
         messages : [
-            {"role": "system", "content": magameaning_prompt},
+            {"role": "system", "content": simplemeaning_prompt},
             {"role": "user", "content": prompt},
         ],
         
@@ -38,7 +38,7 @@ async function GetSectionContent(section_title: string, section_text: string, pa
   }
 
 async function PostContentToDB(section_index: number, article_id: number, section_content: string, section_content_html: string, section_title: string, article_title: string) {
-    await prisma.magaMeanings.create({
+    await prisma.simpleMeaning.create({
         data: {
             articleId: article_id,
             index: section_index,
@@ -51,7 +51,7 @@ async function PostContentToDB(section_index: number, article_id: number, sectio
 }
 
 async function GetContentFromDB(section_index: number, article_id: number) {
-    const section_content = await prisma.magaMeanings.findUnique({
+    const section_content = await prisma.simpleMeaning.findUnique({
         where: {
             meaning_id: {
                 articleId: article_id,
@@ -98,70 +98,6 @@ async function replaceWordsWithLinks(text: string, regex: RegExp) {
   
     return words.join("");
   }
-
-// async function replaceWordsWithLinks(text: string, regex: RegExp) {
-//     const words = text.split(/(\s+)/); // Split text into words, including whitespace
-//     const replacements = new Map();
-//     const replacedFlags = new Set(); // Keeps track of words that have been replaced
-
-//     for (const word of words) {
-//         if (regex.test(word) && !replacedFlags.has(word)) {
-//             // Mark the word as replaced
-//             replacedFlags.add(word);
-
-//             if (!replacements.has(word)) {
-//                 try {
-//                     const trimmed_word = word.trim().replace(/^['"]|[.,\/#!$%\^&\*;:{}=\-_`~()"']+$/g, '');
-//                     const page = await wiki.page(trimmed_word);
-//                     const page_id = page.pageid;
-//                     const page_title = page.title;
-//                     const page_slug = page_title.split(" ").join("-").toLowerCase();
-//                     const replacement = `<a class="text-blue-600" href="/pages/${page_slug}?page=${page_id}">${word}</a>`;
-//                     replacements.set(word, replacement);
-//                 } catch (e) {
-//                     console.log(e);
-//                     // Even on error, consider the word "replaced" to avoid trying to replace it again
-//                     replacements.set(word, word); // Use original word as replacement if error
-//                 }
-//             }
-//         } else {
-//             // For words that do not match or have already been replaced, ensure they have an entry
-//             // This might not be necessary depending on your exact logic needs
-//             replacements.set(word, word);
-//         }
-//     }
-
-//     // Assemble the text back with the first occurrence of each word replaced
-//     const replacedWords = words.map(word => replacements.get(word) || word);
-//     return replacedWords.join("");
-// }
-
-
-
-// async function replaceWordsWithLinks(text: string, regex: RegExp) {
-//     const words = text.split(/(\s+)/); // Split text into words, including whitespace
-//     const replacements = new Map();
-  
-//     for (const word of words) {
-//       if (regex.test(word) && !replacements.has(word)) {
-//         try {
-            
-//           const page = await wiki.page(word.trim());
-//           const page_id = page.pageid;
-//           const page_title = page.title;
-//           const page_slug = page_title.split(" ").join("-").toLowerCase();
-//           const replacement = `<a class="text-blue-600" href="/pages/${page_slug}?page=${page_id}">${word}</a>`;
-//           replacements.set(word, replacement);
-//         } catch (e) {
-//           console.log(e);
-//           replacements.set(word, word); // Use original word as replacement if error
-//         }
-//       }
-//     }
-  
-//     const replacedWords = words.map(word => replacements.get(word) || word);
-//     return replacedWords.join("");
-//   }
 
 
 

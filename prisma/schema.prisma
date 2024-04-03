@@ -8,6 +8,56 @@ datasource db {
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
+model TopgMeanings {
+  articleId    Int
+  meaning      String   @db.Text
+  meaningHtml String   @db.Text
+  index        Int
+  sectionTitle String
+  flagged      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  articleTitle String
+  page         pages    @relation(fields: [articleId], references: [page_id])
+
+  @@id([articleId, index], name: "meaning_id")
+  @@index([articleId], map: "idx_articleId")
+  @@index([articleId, index], name: "meaning_id_index")
+
+}
+
+model GenzMeanings {
+  articleId    Int
+  meaning      String   @db.Text
+  meaningHtml String   @db.Text
+  index        Int
+  sectionTitle String
+  flagged      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  articleTitle String
+  page         pages    @relation(fields: [articleId], references: [page_id])
+
+  @@id([articleId, index], name: "meaning_id")
+  @@index([articleId], map: "idx_articleId")
+  @@index([articleId, index], name: "meaning_id_index")
+
+}
+
+model SimpleMeaning {
+  articleId    Int
+  meaning      String   @db.Text
+  meaningHtml String   @db.Text
+  index        Int
+  sectionTitle String
+  flagged      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  articleTitle String
+  page         pages    @relation(fields: [articleId], references: [page_id])
+
+  @@id([articleId, index], name: "meaning_id")
+  @@index([articleId], map: "idx_articleId")
+  @@index([articleId, index], name: "meaning_id_index")
+
+}
 
 model MagaMeanings {
   articleId    Int
@@ -55,6 +105,9 @@ model pages {
   related_pages     related_pages[]
   hood_meanings     HoodMeanings[]
   maga_meanings     MagaMeanings[]
+  simple_meanings   SimpleMeaning[]
+  topg_meanings     TopgMeanings[]
+  genz_meanings     GenzMeanings[]
 
   @@index([page_id])
 }

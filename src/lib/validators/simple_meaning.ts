@@ -1,6 +1,6 @@
 import {z} from 'zod'
 
-export const MagaMeaningSchema = z.object({
+export const SimpleMeaningSchema = z.object({
     id: z.number(),
     articleId: z.number(),
     meaning: z.string(),
@@ -11,6 +11,6 @@ export const MagaMeaningSchema = z.object({
 })
 
 //array of messages validator
-export const MagaMeaningArraySchema = z.array(MagaMeaningSchema)
+export const SimpleMeaningArraySchema = z.array(SimpleMeaningSchema)
 
-export type MagaMeaning = z.infer<typeof MagaMeaningSchema>
+export type SimpleMeaning = z.infer<typeof SimpleMeaningSchema>

@@ -35,8 +35,8 @@ const SearchItemButton: React.FC<Props> = async (props) => {
         // Return your JSX here 
     
         <Link href={"/pages/" + page_title_slug + "?page=" + page_id} className='w-full overflow-hidden'>
-            <Card className='border-1 border-b-2 border-gray-900/25 '>              
-                <div className="flex flex-row w-fit bg-gradient-to-tl from-primary to-secondary bg-clip-text w-fit text-transparent p-2 pl-4 pr-4">
+            <Card className='border-2 border-black '>              
+                <div className="flex flex-row w-fit bg-gradient-to-br from-gray-500 to-black bg-clip-text w-fit text-transparent p-2 pl-4 pr-4">
                     {page_title}
                 </div>
                 <div className='flex flex-row w-full  p-2 pl-4 pr-4 text-base text-gray-800'>

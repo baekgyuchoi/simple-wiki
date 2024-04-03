@@ -6,7 +6,7 @@ interface Props {
 
 }
 
-type MagaMeanings ={
+type SimpleMeanings ={
     articleId: number;
     meaning: string;
     sectionTitle: string;
@@ -14,7 +14,7 @@ type MagaMeanings ={
 }
 
 async function getFeaturedArticle() {
-    const randomArticle = await prisma.$queryRaw`SELECT * FROM MagaMeanings ORDER BY RAND() LIMIT 1` as MagaMeanings[];
+    const randomArticle = await prisma.$queryRaw`SELECT * FROM SimpleMeanings ORDER BY RAND() LIMIT 1` as SimpleMeanings[];
 
     return randomArticle[0];
 }
