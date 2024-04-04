@@ -81,7 +81,7 @@ useEffect(() => {
           }}
           onKeyDown={(event) => {if (event.key === 'Enter') {submitSearch(inputValue)}}    }
           className=" bg-white text-black placeholder-black border-2 border-black bg-opacity-50 px-5 py-2 sm:px-5 sm:py-3 font-mono w-full flex-1  hover:bg-gray-200 hover:bg-opacity-20 focus:bg-gray-200 focus:bg-opacity-20 rounded-full placeholder:text-base"
-          placeholder="Search about anything"
+          placeholder="Search a wiki article"
         />
         {
           isSearchSubmitted? 
