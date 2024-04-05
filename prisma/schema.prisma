@@ -8,10 +8,11 @@ datasource db {
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
+
 model TopgMeanings {
   articleId    Int
   meaning      String   @db.Text
-  meaningHtml String   @db.Text
+  meaningHtml  String   @db.Text
   index        Int
   sectionTitle String
   flagged      Boolean  @default(false)
@@ -21,14 +22,13 @@ model TopgMeanings {
 
   @@id([articleId, index], name: "meaning_id")
   @@index([articleId], map: "idx_articleId")
-  @@index([articleId, index], name: "meaning_id_index")
-
+  @@index([articleId, index], map: "meaning_id_index")
 }
 
 model GenzMeanings {
   articleId    Int
   meaning      String   @db.Text
-  meaningHtml String   @db.Text
+  meaningHtml  String   @db.Text
   index        Int
   sectionTitle String
   flagged      Boolean  @default(false)
@@ -38,14 +38,13 @@ model GenzMeanings {
 
   @@id([articleId, index], name: "meaning_id")
   @@index([articleId], map: "idx_articleId")
-  @@index([articleId, index], name: "meaning_id_index")
-
+  @@index([articleId, index], map: "meaning_id_index")
 }
 
 model SimpleMeaning {
   articleId    Int
   meaning      String   @db.Text
-  meaningHtml String   @db.Text
+  meaningHtml  String   @db.Text
   index        Int
   sectionTitle String
   flagged      Boolean  @default(false)
@@ -55,14 +54,13 @@ model SimpleMeaning {
 
   @@id([articleId, index], name: "meaning_id")
   @@index([articleId], map: "idx_articleId")
-  @@index([articleId, index], name: "meaning_id_index")
-
+  @@index([articleId, index], map: "meaning_id_index")
 }
 
 model MagaMeanings {
   articleId    Int
   meaning      String   @db.Text
-  meaningHtml String   @db.Text
+  meaningHtml  String   @db.Text
   index        Int
   sectionTitle String
   flagged      Boolean  @default(false)
@@ -72,13 +70,13 @@ model MagaMeanings {
 
   @@id([articleId, index], name: "meaning_id")
   @@index([articleId], map: "idx_articleId")
-  @@index([articleId, index], name: "meaning_id_index")
+  @@index([articleId, index], map: "meaning_id_index")
 }
 
 model HoodMeanings {
   articleId    Int
   meaning      String   @db.Text
-  meaningHtml String   @db.Text
+  meaningHtml  String   @db.Text
   index        Int
   sectionTitle String
   flagged      Boolean  @default(false)
@@ -88,48 +86,45 @@ model HoodMeanings {
 
   @@id([articleId, index], name: "meaning_id")
   @@index([articleId], map: "idx_articleId")
-  @@index([articleId, index], name: "meaning_id_index")
+  @@index([articleId, index], map: "meaning_id_index")
 }
 
 model pages {
-  page_id           Int       @id
-  page_namespace    Int       @default(0)
-  page_title        String    @db.VarChar(255)
-  page_is_redirect  Int       @default(0) @db.UnsignedTinyInt
-  page_content      String    @db.MediumText
-  created_at        DateTime  @default(now())
-  thumbnail_source  String
-  thumbnail_height  Int
-  thumbnail_width   Int 
-  citations         String    @db.Text
-  related_pages     related_pages[]
-  hood_meanings     HoodMeanings[]
-  maga_meanings     MagaMeanings[]
-  simple_meanings   SimpleMeaning[]
-  topg_meanings     TopgMeanings[]
-  genz_meanings     GenzMeanings[]
+  page_id          Int             @id
+  page_namespace   Int             @default(0)
+  page_title       String          @db.VarChar(255)
+  page_is_redirect Int             @default(0) @db.UnsignedTinyInt
+  page_content     String          @db.MediumText
+  created_at       DateTime        @default(now())
+  thumbnail_source String
+  thumbnail_height Int
+  thumbnail_width  Int
+  citations        String          @db.Text
+  related_pages    related_pages[]
+  hood_meanings    HoodMeanings[]
+  maga_meanings    MagaMeanings[]
+  simple_meanings  SimpleMeaning[]
+  topg_meanings    TopgMeanings[]
+  genz_meanings    GenzMeanings[]
 
   @@index([page_id])
 }
 
 model related_pages {
-  mother_page_id    Int     
-  page_id           Int     @id
-  page_title        String  @db.VarChar(255)
-  page_description  String  @db.Text
-  page              pages   @relation(fields: [mother_page_id], references: [page_id])
-
+  page_id          Int    @id
+  page_title       String @db.VarChar(255)
+  page_description String @db.Text
+  mother_page_id   Int
+  page             pages  @relation(fields: [mother_page_id], references: [page_id])
 
   @@index([page_id])
   @@index([mother_page_id])
 }
 
-
-
 model articles {
   page_id            Int     @id @default(autoincrement()) @db.UnsignedInt
   page_namespace     Int     @default(0)
-  page_title         Bytes   @default(dbgenerated()) @db.VarBinary(255)
+  page_title         Bytes   @db.VarBinary(255)
   page_is_redirect   Int     @default(0) @db.UnsignedTinyInt
   page_is_new        Int     @default(0) @db.UnsignedTinyInt
   page_random        Float   @default(0)
@@ -147,4 +142,8 @@ model articles {
   @@index([page_len], map: "page_len")
   @@index([page_random], map: "page_random")
   @@index([page_is_redirect, page_namespace, page_len], map: "page_redirect_namespace_len")
+}
+
+model pageIDs {
+  page_id Int @id
 }

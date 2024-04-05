@@ -1,8 +1,10 @@
 import { simplemeaning_prompt } from "@/app/helpers/constants/simplewiki-prompt";
 import OpenAI from "openai";
 import prisma from "@/lib/db";
+import { getEncoding } from "js-tiktoken";
 
 const wiki = require('wikipedia');
+
 
 const open_ai = new OpenAI({
 apiKey: process.env.OPENAI_API_KEY
@@ -20,9 +22,19 @@ interface Props {
     section_text: string;
 }
 
-async function GetSectionContent(section_title: string, section_text: string, page_id: number) {
+function Get_Token_Length(input:string) {
+    const encoding = getEncoding("cl100k_base");
+    const tokens = encoding.encode(input);
+    return tokens.length
+    
+}
 
-    const prompt =  "title: " + section_title + "\n" + section_text
+async function GetSectionContent(section_title: string, section_text: string, page_id: number) {
+    let shorted_text = section_text;
+    while (Get_Token_Length(shorted_text) > 10000) {
+        shorted_text = shorted_text.slice(0, shorted_text.length - 1);
+    }
+    const prompt =  "title: " + section_title + "\n" + shorted_text
   
     const completion = await open_ai.chat.completions.create({
         model : "gpt-3.5-turbo-0125",
