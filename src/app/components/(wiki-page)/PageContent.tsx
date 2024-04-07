@@ -143,7 +143,7 @@ const PageContent: React.FC<Props> = async (props) => {
     if (props.section_text.length < 150) {
         return null
     }
-   
+    
     const section_from_db = await GetContentFromDB(props.section_index, props.page_id) ;
     let section_content = section_from_db?.meaning;
     
@@ -165,7 +165,7 @@ const PageContent: React.FC<Props> = async (props) => {
             }
         }
     }
-    
+    console.log(props.section_text)
     return (
       
         <div className='mx-4 mb-5 '>

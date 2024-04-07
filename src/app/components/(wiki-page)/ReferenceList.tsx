@@ -21,7 +21,6 @@ interface Props {
 
 const ReferenceList: React.FC<Props> = async (props) => {
     // Define your component logic here 
-    console.log(props.citations)
     const citations_list = props.citations.split(",")
 
 

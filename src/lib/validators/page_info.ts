@@ -17,7 +17,17 @@ export const PageInfoSchema = z.object({
         page_title: z.string(),
         page_description: z.string(),
     })),
+    section_content: z.array(z.object({
+        articleId: z.number(),
+        content: z.string(),
+        index: z.number(),
+        sectionTitle: z.string(),
+        flagged: z.boolean(),
+        createdAt: z.date(),
+        articleTitle: z.string(),
+    })),
 })
+
 
 //array of messages validator
 export const PageInfoArraySchema = z.array(PageInfoSchema)

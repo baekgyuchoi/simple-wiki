@@ -89,6 +89,21 @@ model HoodMeanings {
   @@index([articleId, index], map: "meaning_id_index")
 }
 
+model PageContent {
+  articleId    Int
+  content      String   @db.MediumText
+  index        Int
+  sectionTitle String
+  flagged      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  articleTitle String
+  page         pages    @relation(fields: [articleId], references: [page_id])
+
+  @@id([articleId, index], name: "section_id")
+  @@index([articleId], map: "idx_articleId")
+  @@index([articleId, index], map: "section_id_index")
+}
+
 model pages {
   page_id          Int             @id
   page_namespace   Int             @default(0)
@@ -100,6 +115,7 @@ model pages {
   thumbnail_height Int
   thumbnail_width  Int
   citations        String          @db.Text
+  section_content  PageContent[]
   related_pages    related_pages[]
   hood_meanings    HoodMeanings[]
   maga_meanings    MagaMeanings[]

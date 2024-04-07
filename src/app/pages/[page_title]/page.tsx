@@ -11,10 +11,10 @@ import { RelatedPage } from "@/lib/validators/related_page";
 import validator from "validator"
 import ReferenceList from "@/app/components/(wiki-page)/ReferenceList";
 import RelatedPagesBox from "@/app/components/(wiki-page)/RelatedPagesBox";
+import { SectionContent } from "@/lib/validators/page_content";
 
 
 
-export const maxDuration = 50
 
 
 
@@ -61,8 +61,6 @@ export const maxDuration = 50
 
 
 
-
-
 async function PageInDB(page_id: number) {
   if (page_id == null) {
    
@@ -75,7 +73,8 @@ async function PageInDB(page_id: number) {
         page_id: page_id
       },
       include:{
-        related_pages: true
+        related_pages: true,
+        section_content: true
       }
       
     }) 
@@ -88,7 +87,7 @@ async function PageInDB(page_id: number) {
   }
 }
 
-async function PostPageToDB(page_id: number, page_title: string, page_content: string, page_thumbnail_source: string, page_thumbnail_width: number, page_thumbnail_height: number, citations: string, related_pages: RelatedPage[]) {
+async function PostPageToDB(page_id: number, page_title: string, page_content: string, page_thumbnail_source: string, page_thumbnail_width: number, page_thumbnail_height: number, citations: string, related_pages: RelatedPage[], page_data_organized: SectionContent[]) {
 
   const related_pages_filtered = related_pages.map((related) => {
     return {
@@ -109,6 +108,9 @@ async function PostPageToDB(page_id: number, page_title: string, page_content: s
         citations: citations,
         related_pages:{
           create: related_pages_filtered
+        },
+        section_content:{
+          create: page_data_organized
         }
       }
     })
@@ -212,6 +214,43 @@ async function RelatedPagesInWiki(page_id: number) {
     return related_pages
 }
 
+function OrganizePageContent(page_content: string, page_title: string, page_id: number) {
+  const exclude_list = ["See also", "References", "External links", "Further reading", "Sources", "Notes", "Citations", "Bibliography"]
+    
+  const page_data_organized = page_content.split(/(?=^==[^=].*?==$)/gm).map((section,index) => {
+    // Split each section further into subsections or paragraphs
+    if (index === 0) {
+        return {
+            articleId: page_id,
+            articleTitle: page_title,
+            sectionTitle: "Introduction",
+            content: section,
+            index: index
+        } as SectionContent;
+    }
+    const [sectionTitle, ...content] = section.split("\n").filter(line => line.trim() !== "");
+   
+    if (!sectionTitle.startsWith("==") || !sectionTitle.endsWith("==")) {
+
+    }
+
+  
+    return {
+      articleId: page_id,
+      articleTitle: page_title,
+      sectionTitle: sectionTitle.replace(/=+/g, '').trim(), // Remove '=' from titles
+      content: content.join("\n"),
+      index: index
+    } as SectionContent;
+    
+  });
+
+  return page_data_organized.filter((section) => {
+    return !exclude_list.includes(section.sectionTitle)
+  })
+  
+  
+}
 
 
  
@@ -224,12 +263,12 @@ export default async function WikiPage({ params, searchParams }: {
         // const search = await Client.songs.search(params.song_slug);
         // const lyrics = await search[0].lyrics();
         
-        const exclude_list = ["See also", "References", "External links", "Further reading", "Sources", "Notes", "Citations", "Bibliography"]
-    
+        
         const searchQuery = searchParams?.page;
         const page_id = parseInt(searchQuery!)
 
         let page_data = ""
+        let page_data_organized: SectionContent[] = []
         let page_title = ""
         let page_thumbnail_source = ""
         let page_thumbnail_height = 0
@@ -241,6 +280,9 @@ export default async function WikiPage({ params, searchParams }: {
         if (page_db != null) {
             console.log("Page found in DB")
             page_data = page_db.page_content
+            page_data_organized = page_db.section_content.map((section) => {
+              return section as SectionContent
+            } )
             page_title = page_db.page_title
             page_thumbnail_source = page_db.thumbnail_source
             page_thumbnail_height = page_db.thumbnail_height
@@ -251,9 +293,11 @@ export default async function WikiPage({ params, searchParams }: {
         else {
           console.log("Page not found in DB")
           const page_summary = await PageSummaryInWiki(page_id);
-       
+          
           page_data = await PageInWiki(page_id) as string;
+         
           page_title = page_summary.title
+          page_data_organized = OrganizePageContent(page_data, page_title, page_id)
           page_thumbnail_source = page_summary.thumbnail?.source || ""
           page_thumbnail_height = page_summary.thumbnail?.height || 0
           page_thumbnail_width = page_summary.thumbnail?.width || 0
@@ -261,7 +305,7 @@ export default async function WikiPage({ params, searchParams }: {
           page_citations = await CitationsInWiki(page_id) as string;
           related_pages = await RelatedPagesInWiki(page_id) as RelatedPage[]
 
-          const posted = await PostPageToDB(page_id, page_title, page_data, page_thumbnail_source, page_thumbnail_width, page_thumbnail_height, page_citations, related_pages)
+          const posted = await PostPageToDB(page_id, page_title, page_data, page_thumbnail_source, page_thumbnail_width, page_thumbnail_height, page_citations, related_pages, page_data_organized)
           console.log(posted)
         }
 
@@ -271,27 +315,7 @@ export default async function WikiPage({ params, searchParams }: {
 
 
 
-        const page_data_organized = page_data.split(/(?=^==[^=].*?==$)/gm).map((section,index) => {
-            // Split each section further into subsections or paragraphs
-            if (index === 0) {
-                return {
-                    title: "Introduction",
-                    content: section,
-                };
-            }
-            const [sectionTitle, ...content] = section.split("\n").filter(line => line.trim() !== "");
-           
-            if (!sectionTitle.startsWith("==") || !sectionTitle.endsWith("==")) {
-
-            }
-      
-          
-            return {
-              title: sectionTitle.replace(/=+/g, '').trim(), // Remove '=' from titles
-              content: content.join("\n"),
-            };
-            
-          });
+        
           
           
         
@@ -329,13 +353,11 @@ export default async function WikiPage({ params, searchParams }: {
                              
                           <div className="">
                           {page_data_organized.map((section, index) => {
-                            if (exclude_list.includes(section.title)) {
-                              return null
-                            }
+                            
                             
                               return (
                                 <Suspense key={index} fallback={<div className="py-20 flex justify-center"><Loader2 className="animate-spin" /></div>}>
-                                  <PageContent page_title={page_title} page_id={page_id} section_title={section.title} section_index={index} section_text={section.content}/>
+                                  <PageContent page_title={page_title} page_id={page_id} section_title={section.sectionTitle} section_index={section.index} section_text={section.content}/>
                                 </Suspense>
                               )
                           })}
