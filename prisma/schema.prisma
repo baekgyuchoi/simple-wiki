@@ -96,10 +96,10 @@ model pages {
   page_is_redirect Int             @default(0) @db.UnsignedTinyInt
   page_content     String          @db.MediumText
   created_at       DateTime        @default(now())
-  thumbnail_source String
+  thumbnail_source String          @db.Text
   thumbnail_height Int
   thumbnail_width  Int
-  citations        String          @db.Text
+  citations        String          @db.MediumText
   related_pages    related_pages[]
   hood_meanings    HoodMeanings[]
   maga_meanings    MagaMeanings[]
@@ -111,12 +111,13 @@ model pages {
 }
 
 model related_pages {
-  page_id          Int    @id
+  page_id          Int    
   page_title       String @db.VarChar(255)
   page_description String @db.Text
   mother_page_id   Int
   page             pages  @relation(fields: [mother_page_id], references: [page_id])
 
+  @@id ([page_id, mother_page_id], name: "related_page_id")
   @@index([page_id])
   @@index([mother_page_id])
 }

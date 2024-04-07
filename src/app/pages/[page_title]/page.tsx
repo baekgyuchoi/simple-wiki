@@ -98,7 +98,7 @@ async function PostPageToDB(page_id: number, page_title: string, page_content: s
     }
   })
   try{
-    await prisma.pages.create({
+     await prisma.pages.create({
       data: {
         page_id: page_id,
         page_title: page_title,
@@ -132,7 +132,7 @@ async function PageInWiki(page_id: number) {
     
     const content_data = await pageResult.content();
   
-
+  
     return content_data
 }
 
@@ -165,13 +165,13 @@ async function CitationsInWiki(page_id: number) {
     const pageResult = await wiki.page(page_id);
   
     
-    const citations_data = await pageResult.references({limit:100});
+    const citations_data = await pageResult.references({limit:20});
 
-    
+  
     citations_data.filter((citation: string) => {
       return validator.isURL(citation)
     })
-
+    
 
     return citations_data.toString() as string
 
@@ -260,9 +260,13 @@ export default async function WikiPage({ params, searchParams }: {
 
           page_citations = await CitationsInWiki(page_id) as string;
           related_pages = await RelatedPagesInWiki(page_id) as RelatedPage[]
-
-          const posted = await PostPageToDB(page_id, page_title, page_data, page_thumbnail_source, page_thumbnail_width, page_thumbnail_height, page_citations, related_pages)
-          console.log(posted)
+          try{
+            const posted = await PostPageToDB(page_id, page_title, page_data, page_thumbnail_source, page_thumbnail_width, page_thumbnail_height, page_citations, related_pages)
+            console.log(posted)
+          }
+          catch(e){
+            console.log(e)
+          }
         }
 
   
@@ -332,6 +336,7 @@ export default async function WikiPage({ params, searchParams }: {
                             if (exclude_list.includes(section.title)) {
                               return null
                             }
+                            console.log(index)
                             
                               return (
                                 <Suspense key={index} fallback={<div className="py-20 flex justify-center"><Loader2 className="animate-spin" /></div>}>

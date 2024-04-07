@@ -31,8 +31,8 @@ function Get_Token_Length(input:string) {
 
 async function GetSectionContent(section_title: string, section_text: string, page_id: number) {
     let shorted_text = section_text;
-    while (Get_Token_Length(shorted_text) > 10000) {
-        shorted_text = shorted_text.slice(0, shorted_text.length - 1);
+    while (Get_Token_Length(shorted_text) > 12000) {
+        shorted_text = shorted_text.slice(0, shorted_text.length/2);
     }
     const prompt =  "title: " + section_title + "\n" + shorted_text
   
@@ -143,6 +143,8 @@ const PageContent: React.FC<Props> = async (props) => {
     if (props.section_text.length < 150) {
         return null
     }
+   
+   
    
     const section_from_db = await GetContentFromDB(props.section_index, props.page_id) ;
     let section_content = section_from_db?.meaning;
