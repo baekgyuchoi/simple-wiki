@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import PageContent from "@/app/components/(wiki-page)/PageContent";
 import { Loader2 } from "lucide-react";
-import FooterContainer from "@/app/components/(footer)/FooterContainer";
+
 import prisma from "@/lib/db";
 import { PageInfo } from "@/lib/validators/page_info";
 import { RelatedPage } from "@/lib/validators/related_page";
@@ -75,7 +75,7 @@ async function PageInDB(page_id: number) {
         page_id: page_id
       },
       include:{
-        related_pages: true
+        related_pages: true,
       }
       
     }) 

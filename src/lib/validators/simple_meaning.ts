@@ -1,9 +1,10 @@
 import {z} from 'zod'
 
 export const SimpleMeaningSchema = z.object({
-    id: z.number(),
     articleId: z.number(),
+    articleTitle: z.string(),
     meaning: z.string(),
+    meaningHtml: z.string(),
     index: z.number(),
     sectionTitle: z.string(),
     flagged: z.boolean(),

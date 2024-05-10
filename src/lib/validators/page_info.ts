@@ -17,7 +17,18 @@ export const PageInfoSchema = z.object({
         page_title: z.string(),
         page_description: z.string(),
     })),
+    simple_meanings: z.array(z.object({
+        articleId: z.number(),
+        articleTitle: z.string(),
+        meaning: z.string(),
+        meaningHtml: z.string(),
+        index: z.number(),
+        sectionTitle: z.string(),
+        flagged: z.boolean(),
+        createdAt: z.date(),
+    })).optional()
 })
+
 
 //array of messages validator
 export const PageInfoArraySchema = z.array(PageInfoSchema)
