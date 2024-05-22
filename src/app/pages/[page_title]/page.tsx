@@ -11,54 +11,78 @@ import { RelatedPage } from "@/lib/validators/related_page";
 import validator from "validator"
 import ReferenceList from "@/app/components/(wiki-page)/ReferenceList";
 import RelatedPagesBox from "@/app/components/(wiki-page)/RelatedPagesBox";
+import { redirect } from "next/navigation";
 
 
 
 export const maxDuration = 50
 
 
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | null};
+}): Promise<Metadata> {
+  const searchQuery = searchParams?.page
+  const page_id = parseInt(searchQuery!)
+  // read route params
 
-// export async function generateMetadata({
-//   searchParams,
-// }: {
-//   searchParams?: { [key: string]: string | null};
-// }): Promise<Metadata> {
-//   const searchQuery = searchParams?.page
-//   const page_id = parseInt(searchQuery!)
-//   // read route params
-//   const wiki_db = await prisma.articles.findUnique({
-//     where: {
-//       page_id: page_id
-//     },
-//     include: {
-//       hood_meaning: true
-//     }
-//   })
+  const wiki_db = await prisma.pages.findUnique({
+    where: {
+      page_id: page_id
+    }
+  })
 
-//   let page_description = ""
-//   try{
-//     page_description = wiki_db?.hood_meaning[0]?.meaning || ""
-//   }
-//   catch{
-//     const page_title = wiki_db?.page_title_string || ""
-//     page_description = "Hoodwiki article about: " + page_title 
-//   }
 
- 
-//   if (wiki_db == null) {
-//     return {
-//       title: `Meaning of `,
-//       description: "Meaning of this song - parsed by AI",
+  if (wiki_db === null) {
+    return {
+      title: `` ,
+      description: "",
      
-//     }
-//   }
-//   return {
-//     title: `About ${wiki_db.page_title_string}`,
-//     description: page_description,
-//     }
-//   };
+    }
+  }
 
+  try{
+    const simple_meanings = await prisma.simpleMeaning.findMany({
+      where: {
+        articleId: page_id
+      }
+    })
 
+    if (simple_meanings.length > 0) {
+
+      return {
+        metadataBase: new URL("https://www.thesimplewiki.com/completed_pages/" + wiki_db.page_title.split(" ").join("-").split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;") + "?page=" + page_id.toString()),
+        title: `About ${wiki_db.page_title} - Simplified | SimpleWiki`,
+        description: simple_meanings[0].meaning,
+        openGraph: {
+          title: `About ${wiki_db.page_title} - Simplified | SimpleWiki`,
+          description: simple_meanings[0].meaning,
+          images: [
+            {
+              url: wiki_db.thumbnail_source,
+              width: wiki_db.thumbnail_width,
+              height: wiki_db.thumbnail_height,
+              alt: `Image of ${wiki_db.page_title}`
+            }
+          ]
+          }
+        }
+      }
+    }catch(e){
+      console.log("Error: ", e)
+      return {
+        title: `` ,
+        description: "",
+      
+      }
+    }
+    return {
+      title: `` ,
+      description: "",
+    
+    }
+  };
 
 
 
@@ -212,12 +236,30 @@ async function RelatedPagesInWiki(page_id: number) {
     return related_pages
 }
 
+async function ContentInArticle(page_id: number) {
+  const page = await prisma.pages.findUnique({
+    where: {
+      page_id: page_id
+    },
+    include: {
+      simple_meanings: true
+    }
+  })
+
+  if  (!page?.simple_meanings || page?.simple_meanings === undefined || page?.simple_meanings.length === 0) {
+    return false
+  
+  }
+
+  return true
+}
+
 
 
  
 
 export default async function WikiPage({ params, searchParams }: {
-    params: { page_title_slug : string };
+    params: { page_title : string };
     searchParams?: { [key: string]: string | null}; 
     }) {
         // const Client = new Genius.Client("oNwFSu_AIjtrw3owTLM9p_RYc2o9EjyJTNv9Lf05GDgl7adlODR9DQwiUlz8FzDZ");
@@ -236,10 +278,14 @@ export default async function WikiPage({ params, searchParams }: {
         let page_thumbnail_width = 0
         let page_citations = ""
         let related_pages: RelatedPage[] = []
-
+        const is_content = await ContentInArticle(page_id)
+        if (is_content) {
+          redirect(`/completed_pages/${params.page_title}?page=${page_id}`)
+        }
         const page_db = await PageInDB(page_id);
         if (page_db != null) {
             console.log("Page found in DB")
+            
             page_data = page_db.page_content
             page_title = page_db.page_title
             page_thumbnail_source = page_db.thumbnail_source

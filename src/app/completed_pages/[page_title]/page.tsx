@@ -55,22 +55,34 @@ export async function generateMetadata({
         metadataBase: new URL("https://www.thesimplewiki.com/completed_pages/" + wiki_db.page_title.split(" ").join("-").split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;") + "?page=" + page_id.toString()),
         title: `About ${wiki_db.page_title} - Simplified | SimpleWiki`,
         description: simple_meanings[0].meaning,
+        openGraph: {
+          title: `About ${wiki_db.page_title} - Simplified | SimpleWiki`,
+          description: simple_meanings[0].meaning,
+          images: [
+            {
+              url: wiki_db.thumbnail_source,
+              width: wiki_db.thumbnail_width,
+              height: wiki_db.thumbnail_height,
+              alt: `Image of ${wiki_db.page_title}`
+            }
+          ]
+          }
+        }
+      }
+    }catch(e){
+      console.log("Error: ", e)
+      return {
+        title: `` ,
+        description: "",
+      
       }
     }
-  }catch(e){
-    console.log("Error: ", e)
     return {
       title: `` ,
       description: "",
-     
+    
     }
-  }
-  return {
-    title: `` ,
-    description: "",
-   
-  }
-};
+  };
 
 
 
