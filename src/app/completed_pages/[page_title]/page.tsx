@@ -197,7 +197,7 @@ export default async function CompletedWikiPage({ params, searchParams }: {
                             
                             return (
                               
-                              <CompletedPageContent key={index} section_title={section.articleTitle} section_content_html={section.meaningHtml}/>
+                              <CompletedPageContent key={index} section_title={section.sectionTitle} section_content_html={section.meaningHtml}/>
                         
                             )
                           })}
