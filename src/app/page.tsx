@@ -5,6 +5,7 @@ import HomeButton from "./components/(home-page)/HomeButton";
 import HomeSearchInput from "./components/(home-page)/HomeSearchInput";
 import HomeTypewriter from "./components/(home-page)/HomeTypewriter";
 
+
 export default async function Home() {
 
   return (
